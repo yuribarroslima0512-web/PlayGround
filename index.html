@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#101a20">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23101a20'/%3E%3Cpath d='M32 8 37 25 54 32 37 37 32 56 26 37 9 32 26 25Z' fill='%23f4c86a'/%3E%3C/svg%3E">
+  <title>Vale da Aurora — RPG de aventura</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="game-shell" aria-label="Jogo Vale da Aurora">
+    <canvas id="game" aria-label="Mundo do jogo"></canvas>
+    <div class="vignette"></div>
+
+    <header class="topbar">
+      <section class="hero-card glass">
+        <div class="portrait"><span class="portrait-spark">✦</span><span class="portrait-face">◕</span></div>
+        <div class="hero-info">
+          <div class="hero-title"><strong>LYRA</strong><span class="level-pill">NV. <b id="level">1</b></span></div>
+          <div class="meter-row"><span class="heart">♥</span><div class="meter hp-meter"><i id="hp-fill"></i></div><small id="hp-label">100 / 100</small></div>
+          <div class="meter-row xp-row"><span class="xp-star">✦</span><div class="meter xp-meter"><i id="xp-fill"></i></div><small id="xp-label">0 / 40</small></div>
+        </div>
+      </section>
+
+      <section class="quest-card glass">
+        <div class="quest-icon">✧</div>
+        <div class="quest-copy"><span class="eyebrow">JORNADA PRINCIPAL</span><strong id="quest-title">Luzes perdidas</strong><span id="quest-description">Encontre os 3 fragmentos de aurora</span></div>
+        <div class="quest-count" id="fragment-count">0 <i>/ 3</i></div>
+      </section>
+
+      <section class="right-tools">
+        <div class="weather-pill glass"><span class="weather-dot"></span> BOSQUE DE LÚMEN</div>
+        <button class="icon-button glass" id="sound-button" aria-label="Alternar som">♫</button>
+        <button class="icon-button glass" id="help-button" aria-label="Ajuda">?</button>
+        <div class="minimap glass"><canvas id="map" width="156" height="116"></canvas><span class="map-label">VALE DA AURORA</span></div>
+      </section>
+    </header>
+
+    <div class="location-toast" id="location-toast"><span>✦</span><div><small>VOCÊ DESCOBRIU</small><strong>Clareira dos Sussurros</strong></div></div>
+    <div class="toast" id="toast"></div>
+
+    <div class="bottom-ui">
+      <div class="controls-hint glass"><kbd>WASD</kbd> mover <span>·</span> <kbd>ESPAÇO</kbd> atacar <span>·</span> <kbd>SHIFT</kbd> esquiva</div>
+      <div class="quickbar glass">
+        <div class="quick-slot active-slot"><span class="slot-key">1</span><span class="slot-art potion">✿</span><b id="potion-count">2</b></div>
+        <div class="quick-slot"><span class="slot-key">2</span><span class="slot-art">◈</span><b id="shard-count">0</b></div>
+        <div class="quick-slot empty-slot"><span class="slot-key">3</span><span class="slot-art">＋</span></div>
+        <div class="quick-separator"></div>
+        <div class="weapon-slot"><span class="weapon-art">⚔</span><span><small>EQUIPADO</small><b>Lâmina de freixo</b></span><i>⚡ 12</i></div>
+      </div>
+      <div class="objective-chip glass"><span>◉</span><span id="objective-distance">Siga as luzes</span><i>⌖</i></div>
+    </div>
+
+    <div class="mobile-controls" aria-label="Controles de toque">
+      <div class="joystick" id="joystick"><div class="joy-ring"></div><div class="joy-knob" id="joy-knob"></div></div>
+      <div class="touch-actions"><button class="touch-button potion-button" id="potion-button"><span>✿</span><small>POÇÃO</small><b id="touch-potions">2</b></button><button class="touch-button dodge-button" id="dodge-button"><span>➤</span><small>ROLAR</small></button><button class="touch-button attack-button" id="attack-button"><span>⚔</span><small>ATACAR</small></button></div>
+    </div>
+
+    <div class="modal-backdrop" id="modal-backdrop">
+      <section class="modal glass" id="modal">
+        <button class="modal-close" id="modal-close" aria-label="Fechar">×</button>
+        <div class="modal-emblem">✧</div><span class="eyebrow">GUIA DA AVENTUREIRA</span><h2>O vale precisa de você</h2>
+        <p>As luzes da aurora se espalharam pela floresta. Encontre os <b>3 fragmentos</b>, enfrente as criaturas corrompidas e desperte o altar antigo.</p>
+        <div class="guide-grid"><div><kbd>W A S D</kbd><small>Mover</small></div><div><kbd>ESPAÇO</kbd><small>Atacar</small></div><div><kbd>SHIFT</kbd><small>Esquivar</small></div><div><kbd>E</kbd><small>Interagir</small></div></div>
+        <button class="primary-button" id="play-button">AVENTURAR-SE <span>→</span></button>
+        <small class="mobile-note">No celular, use o analógico e os botões de ação.</small>
+      </section>
+    </div>
+
+    <div class="end-screen hidden" id="end-screen"><div class="end-card glass"><div class="end-star">✦</div><span class="eyebrow">AURORA RESTAURADA</span><h1>O vale floresce<br>novamente.</h1><p>Você trouxe a luz de volta para Lúmen.</p><div class="reward-line">✧ &nbsp; HERÓI DO VALE &nbsp; ✧</div><button class="primary-button" id="restart-button">JOGAR NOVAMENTE <span>↻</span></button></div></div>
+    <div class="level-up hidden" id="level-up"><span>✦</span><b>NÍVEL AUMENTADO!</b><small id="level-up-text">Nível 2 · +20 vida máxima</small></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
